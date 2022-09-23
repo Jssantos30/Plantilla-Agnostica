@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   View,
@@ -10,8 +10,58 @@ import {
   StatusBar,
 } from "react-native";
 import { Icon } from 'react-native-elements';
+import { useNavigation } from '@react-navigation/native';
+import { validateEmail } from "../../utils/helpers";
 
-export default function LoginForm({ navigation }) {
+export default function LoginForm() {
+  const [showPassword, SetShowPassword] = useState(false)
+  const [formData, setFormData] = useState(defaultFormValues())
+  const [errorEmail, setErrorEmail] = useState("")
+  const [errorPassword, setErrorPassword] = useState("")
+
+  const navigation = useNavigation()
+
+  const onChange = (e, type) => {
+    setFormData({ ...formData, [type]: e.nativeEvent.text })
+  }
+
+  const doLogin = async() => {
+    if (!validateData()){
+      return;
+    }
+
+    const result = await loginWithEmailAndPassword(formData.email, formData.password)
+
+    if(!result.statusResponse) {
+      setErrorEmail(result.error)
+      setErrorPassword(result.error)
+      return
+    }
+
+    navigation.navigate("Account")
+
+  }
+
+  const validateData = () => {
+    setErrorEmail("")
+    setErrorPassword("")
+    let isValid = true
+
+    if (!validateEmail(formData.email)) {
+      setErrorEmail("Debes ingresar un email valido")
+      isValid = false
+    }
+    if (!isEmpty(formData.password)) {
+      setErrorPassword("Debes de ingresar tu contraseña")
+      isValid = false
+    }
+
+    return isValid
+  }
+
+
+
+
 
   return (
 
@@ -39,6 +89,11 @@ export default function LoginForm({ navigation }) {
           placeholderTextColor="white"
           color="white"
           autoCapitalize="none"
+          onChange={(e) => onChange(e, "email")}
+          keyboardType="email-address"
+          
+          errorMessage={errorEmail}
+          defaultValue={formData.email}
 
         />
       </View>
@@ -49,6 +104,11 @@ export default function LoginForm({ navigation }) {
           placeholderTextColor="white"
           color="white"
           autoCapitalize="none"
+          password={true}
+          secureTextEntry={!showPassword}
+          onChange={(e) => onChange(e, "password")}
+          errorMessage={errorPassword}
+          defaultValue={formData.password}
 
         />
       </View>
@@ -82,6 +142,9 @@ export default function LoginForm({ navigation }) {
 
     </SafeAreaView>
   );
+}
+const defaultFormValues = () => {
+  return { email: "", password: "" }
 }
 
 const styles = StyleSheet.create({

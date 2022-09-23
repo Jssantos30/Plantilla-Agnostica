@@ -4,10 +4,8 @@ import {
     View,
     Text,
     TextInput,
-    Button,
     TouchableOpacity,
     SafeAreaView,
-    StatusBar,
 } from "react-native";
 import { Icon } from 'react-native-elements';
 
