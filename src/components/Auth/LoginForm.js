@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { Icon } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
-import { validateEmail } from "../../utils/helpers";
+import { validateEmail, loginWithEmailAndPassword } from "../../utils/helpers";
 
 export default function LoginForm() {
   const [showPassword, SetShowPassword] = useState(false)
@@ -91,7 +91,6 @@ export default function LoginForm() {
           autoCapitalize="none"
           onChange={(e) => onChange(e, "email")}
           keyboardType="email-address"
-          
           errorMessage={errorEmail}
           defaultValue={formData.email}
 
@@ -118,7 +117,7 @@ export default function LoginForm() {
         <Button style={styles.btn_Item}
           title="INICIAR SESIÓN"
           color="grey"
-          onPress={() => navigation.navigate('Account')}
+          onPress={() => doLogin()}
         />
 
         <TouchableOpacity>
